@@ -14,6 +14,7 @@ from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import StandardScaler
 
+from sklearn.svm import LinearSVC
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
@@ -80,10 +81,11 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test,category_names):
-    """ Here I only caculate the accuracy. I don't know how to caculate other values."""
+    """ Here I caculated the accuracy and F1_scores."""
     y_pred = model.predict(X_test)    
-    accuracy = (y_pred == Y_test.values ).mean()
-    print("All Accuracy:", accuracy)
+    for i in range(len(category_names)):
+        print("Accuracy score for "+Y_test.columns[i], accuracy_score(Y_test.values[:,i],y_preds[:,i]))
+    print(classification_report(y_preds,Y_test.values,target_names=category_names)
     
 def save_model(model, model_filepath):
     """save model to pickle file
