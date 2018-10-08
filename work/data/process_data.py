@@ -26,23 +26,15 @@ def clean_data(df):
 
         # convert column from string to numeric
         categories[column] = pd.to_numeric(categories[column])
-    #Id = pd.DataFrame(df["id"])
-    #categories =categories.reset_index()
-    #categories = Id.join(categories,how="inner")
-    #categories = pd.melt(categories, id_vars="id",value_vars=categories.columns[1:])
-    #categories =categories[categories["value"]==1]
+        if pd.DataFrame(categories[column].value_counts()).shape[0]==1: # this columns has only one class
+            del categories[column] 
+    
     
     del df["categories"]
     df = df.join(categories,how="inner")
-    #df = df.loc[:,["id","message","variable"]]
     df = df.drop_duplicates()
     
-    #group = list(df["variable"].unique())
-    #dic  ={}
-    #for i in group:
-        #dic[i]=group.index(i)
-    #df["categories"]= df["variable"].apply(lambda x:dic[x])
-    
+   
     return df
 
 
