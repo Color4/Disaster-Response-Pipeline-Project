@@ -23,8 +23,11 @@ from sklearn.multioutput import MultiOutputClassifier
 
 
 def load_data(database_filepath):
-    engine = create_engine("sqlite:////home/workspace"+database_filepath)
-    df = pd.read_sql_table("DisasterResponse", engine)
+    """Load data from database_filepath
+    return : a dataframe
+    """
+    engine = create_engine("sqlite:///"+database_filepath)
+    df = pd.read_sql_table(database_filepath, engine)
     X = df["message"]
     Y = df[df.columns[4:]]
     category_names = list(df.columns[4:])
@@ -57,21 +60,30 @@ def tokenize(text):
     return clean_tokens
 
 def build_model():
+    """ build a multiOutputClassifier model
+    return a GridSearchCV model
+    """
     model = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(LinearSVC(C=0.1)))
     ])    
+    parameters = {
+    'vect__max_df': (0.5, 0.75), #0.5,  
+    # 'vect__max_features': (None, 5000, 10000),
+    # 'tfidf__use_idf': (True, False),
+    #'clf__penalty': ['l1', 'l2'],
+    #'clf__C':[0.01,0.1]
+    }
+    model = GridSearchCV(model, param_grid=parameters)
+    return model 
 
 
 def evaluate_model(model, X_test, Y_test,category_names):
-    y_pred = model.predict(X_test)
-    confusion_mat = confusion_matrix(y_test, y_pred, labels=category_names)
-    accuracy = model.score(X_test,Y_test)
-
-    print("Labels:", category_names)
-    print("Confusion Matrix:\n", confusion_mat)
-    print("Accuracy:", accuracy)
+    """ Here I only caculate the accuracy. I don't know how to caculate other values."""
+    y_pred = model.predict(X_test)    
+    accuracy = (y_pred == Y_test.values ).mean()
+    print("All Accuracy:", accuracy)
     
 def save_model(model, model_filepath):
     """save model to pickle file
