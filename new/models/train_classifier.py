@@ -44,7 +44,6 @@ def load_data(database_filepath):
     df = pd.read_sql_table(database_filepath, engine)
     X = df["message"]
     Y = df[df.columns[4:]]
-    Y = shuffle(Y)
     category_names = list(df.columns[4:])
     return X, Y,category_names
 
