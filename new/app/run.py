@@ -39,28 +39,48 @@ model = joblib.load("../models/classifier.pkl")
 def index():
     
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
+    # TODO:  modify to extract data for your own visuals
+    request_counts = df.groupby('request').count()['message']
+    request_names = list(request_counts.index)
+    offer_counts = df.groupby('offer').count()['message']
+    offer_names = list(offer_counts.index)
     
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # TODO: modify to create your own visuals
     graphs = [
         {
             'data': [
                 Bar(
-                    x=genre_names,
-                    y=genre_counts
+                    x=request_names,
+                    y=request_counts
                 )
             ],
 
             'layout': {
-                'title': 'Distribution of Message Genres',
+                'title': 'Distribution of Message requests',
                 'yaxis': {
                     'title': "Count"
                 },
                 'xaxis': {
-                    'title': "Genre"
+                    'title': "request"
+                }
+            }
+        },
+        {
+            'data': [
+                Bar(
+                    x=offer_names,
+                    y=offer_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Message offers',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "offer"
                 }
             }
         }
@@ -72,7 +92,6 @@ def index():
     
     # render web page with plotly graphs
     return render_template('master.html', ids=ids, graphJSON=graphJSON)
-
 
 # web page that handles user query and displays model results
 @app.route('/go')
